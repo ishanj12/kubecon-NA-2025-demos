@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-gcp
+  namespace: demo
+  labels:
+    app: hello-gcp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-gcp
+  template:
+    metadata:
+      labels:
+        app: hello-gcp
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html
+        configMap:
+          name: hello-gcp-html
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hello-gcp-html
+  namespace: demo
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Hello from GCP Cluster</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                background: linear-gradient(135deg, #4285F4 0%, #34A853 50%, #FBBC05 75%, #EA4335 100%);
+                color: white;
+            }
+            .container {
+                text-align: center;
+                padding: 40px;
+                background: rgba(0,0,0,0.3);
+                border-radius: 10px;
+            }
+            h1 { font-size: 3em; margin: 0; }
+            p { font-size: 1.5em; }
+            .gcp-logo { font-size: 5em; }
+            .badge {
+                display: inline-block;
+                background: rgba(255,255,255,0.2);
+                padding: 10px 20px;
+                border-radius: 20px;
+                margin: 10px;
+                font-size: 0.8em;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="gcp-logo">☁️</div>
+            <h1>Hello from GCP Cluster!</h1>
+            <p>This service is running in the "local" GCP cluster</p>
+            <p>Exposed publicly via ngrok Gateway API</p>
+            <div>
+                <span class="badge">🌐 Public Access</span>
+                <span class="badge">🔒 ngrok Edge</span>
+                <span class="badge">⚡ Gateway API</span>
+            </div>
+        </div>
+    </body>
+    </html>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-gcp
+  namespace: demo
+spec:
+  selector:
+    app: hello-gcp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
