@@ -1,0 +1,64 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: hello-gcp-gateway
+  namespace: demo
+  labels:
+    # Pool label - multiple gateways with same label share traffic
+    ngrok.com/endpoint-pool: demo-pool
+spec:
+  gatewayClassName: ngrok
+  listeners:
+  - name: http
+    protocol: HTTP
+    port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: hello-gcp-route
+  namespace: demo
+spec:
+  parentRefs:
+  - name: hello-gcp-gateway
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: hello-gcp
+      port: 80
+---
+# Second Gateway in the same pool for HA
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: hello-gcp-gateway-2
+  namespace: demo
+  labels:
+    # Same pool label - shares endpoint with gateway above
+    ngrok.com/endpoint-pool: demo-pool
+spec:
+  gatewayClassName: ngrok
+  listeners:
+  - name: http
+    protocol: HTTP
+    port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: hello-gcp-route-2
+  namespace: demo
+spec:
+  parentRefs:
+  - name: hello-gcp-gateway-2
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: hello-gcp
+      port: 80

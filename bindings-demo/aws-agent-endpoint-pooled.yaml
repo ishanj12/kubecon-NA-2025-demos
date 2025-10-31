@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-aws-2
+  namespace: demo
+spec:
+  selector:
+    app: hello-aws
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: ngrok.k8s.ngrok.com/v1alpha1
+kind: AgentEndpoint
+metadata:
+  name: hello-aws-binding
+  namespace: demo
+  labels:
+    # Pool label - multiple endpoints with same label share traffic
+    ngrok.com/endpoint-pool: demo-pool
+spec:
+  url: http://aws-service.demo
+  bindings:
+    - kubernetes
+  upstream:
+    url: http://hello-aws.demo:80
+---
+# Second AgentEndpoint in the same pool for HA
+apiVersion: ngrok.k8s.ngrok.com/v1alpha1
+kind: AgentEndpoint
+metadata:
+  name: hello-aws-binding-2
+  namespace: demo
+  labels:
+    # Same pool label - shares endpoint with AgentEndpoint above
+    ngrok.com/endpoint-pool: demo-pool
+spec:
+  url: http://aws-service.demo
+  bindings:
+    - kubernetes
+  upstream:
+    url: http://hello-aws-2.demo:80
