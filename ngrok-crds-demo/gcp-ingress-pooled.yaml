@@ -15,13 +15,13 @@ kind: Ingress
 metadata:
   name: hello-gcp-ingress
   namespace: demo
-  labels:
-    # Pool label - multiple ingresses with same label share endpoint
-    ngrok.com/endpoint-pool: demo-pool
+  annotations:
+    k8s.ngrok.com/pooling-enabled: "true"
 spec:
   ingressClassName: ngrok
   rules:
-  - http:
+  - host: ingress-demo.ngrok.app
+    http:
       paths:
       - path: /
         pathType: Prefix
@@ -37,13 +37,13 @@ kind: Ingress
 metadata:
   name: hello-gcp-ingress-2
   namespace: demo
-  labels:
-    # Same pool label - shares endpoint with ingress above
-    ngrok.com/endpoint-pool: demo-pool
+  annotations:
+    k8s.ngrok.com/pooling-enabled: "true"
 spec:
   ingressClassName: ngrok
   rules:
-  - http:
+  - host: ingress-demo.ngrok.app  # Same host = shared pool
+    http:
       paths:
       - path: /
         pathType: Prefix

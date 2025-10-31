@@ -6,7 +6,8 @@ metadata:
 spec:
   ingressClassName: ngrok
   rules:
-  - http:
+  - host: ingress-demo.ngrok.app
+    http:
       paths:
       - path: /
         pathType: Prefix
