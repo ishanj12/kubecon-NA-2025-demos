@@ -27,10 +27,10 @@ metadata:
   namespace: demo
 spec:
   policy:
-    on_http_response:
+    on_http_request:
       - actions:
-          - type: add-headers
+          - type: restrict-ips
             config:
-              headers:
-                x-demo-source: "ngrok-ingress"
-                x-powered-by: "ngrok"
+              enforce: true
+              deny:
+                - 76.21.12.117/32
