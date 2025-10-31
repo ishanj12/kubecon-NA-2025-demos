@@ -1,0 +1,9 @@
+apiVersion: ngrok.k8s.ngrok.com/v1alpha1
+kind: AgentEndpoint
+metadata:
+  name: hello-gcp-agent
+  namespace: demo
+spec:
+  url: https://kubecon-agentep-demo.ngrok.app
+  upstream:
+    url: http://hello-gcp.demo:80

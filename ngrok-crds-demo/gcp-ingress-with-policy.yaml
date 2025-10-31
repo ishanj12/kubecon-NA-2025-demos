@@ -32,5 +32,5 @@ spec:
           - type: restrict-ips
             config:
               enforce: true
-              deny:
-                - 76.21.12.117/32
+              ip_policies:
+                - ipp_30ZK1RXgctwBaDB3sgiIBkYqPb9
