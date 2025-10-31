@@ -1,17 +1,17 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: hello-gcp-gateway
+  name: gcp-gateway
   namespace: demo
-  labels:
-    # Pool label - multiple gateways with same label share traffic
-    ngrok.com/endpoint-pool: demo-pool
+  annotations:
+    k8s.ngrok.com/pooling-enabled: "true"
 spec:
   gatewayClassName: ngrok
   listeners:
-  - name: http
-    protocol: HTTP
-    port: 80
+  - name: https
+    hostname: "gw-api-demo.ngrok.app"
+    protocol: HTTPS
+    port: 443
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -20,7 +20,7 @@ metadata:
   namespace: demo
 spec:
   parentRefs:
-  - name: hello-gcp-gateway
+  - name: gcp-gateway
   rules:
   - matches:
     - path:
@@ -34,17 +34,17 @@ spec:
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: hello-gcp-gateway-2
+  name: gcp-gateway-2
   namespace: demo
-  labels:
-    # Same pool label - shares endpoint with gateway above
-    ngrok.com/endpoint-pool: demo-pool
+  annotations:
+    k8s.ngrok.com/pooling-enabled: "true"
 spec:
   gatewayClassName: ngrok
   listeners:
-  - name: http
-    protocol: HTTP
-    port: 80
+  - name: https
+    hostname: "gw-api-demo.ngrok.app"  # Same hostname = shared pool
+    protocol: HTTPS
+    port: 443
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -53,7 +53,7 @@ metadata:
   namespace: demo
 spec:
   parentRefs:
-  - name: hello-gcp-gateway-2
+  - name: gcp-gateway-2
   rules:
   - matches:
     - path:

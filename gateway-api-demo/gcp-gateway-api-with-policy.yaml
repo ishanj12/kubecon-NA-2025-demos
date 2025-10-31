@@ -1,17 +1,18 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: hello-gcp-gateway
+  name: gcp-gateway
   namespace: demo
   annotations:
     # Reference the traffic policy
-    ngrok.com/traffic-policy: hello-policy
+    k8s.ngrok.com/traffic-policy: hello-policy
 spec:
   gatewayClassName: ngrok
   listeners:
-  - name: http
-    protocol: HTTP
-    port: 80
+  - name: https
+    hostname: "gw-api-demo.ngrok.app"
+    protocol: HTTPS
+    port: 443
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -20,7 +21,7 @@ metadata:
   namespace: demo
 spec:
   parentRefs:
-  - name: hello-gcp-gateway
+  - name: gcp-gateway
   rules:
   - matches:
     - path:
