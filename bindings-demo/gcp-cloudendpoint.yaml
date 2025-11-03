@@ -1,0 +1,16 @@
+apiVersion: ngrok.k8s.ngrok.com/v1alpha1
+kind: CloudEndpoint
+metadata:
+  name: cloud-gateway
+  namespace: default
+spec:
+  url: http://webapp.cust1
+  bindings:
+    - kubernetes
+  traffic_policy:
+    policy: 
+      on_http_request:
+        - actions:
+            - type: forward-internal
+              config:
+                url: https://webapp.cust1.internal
