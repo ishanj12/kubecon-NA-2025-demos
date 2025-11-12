@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: hello-gcp
-  namespace: demo
+  namespace: gateway-demo
   labels:
     app: hello-gcp
 spec:
@@ -32,7 +32,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: hello-gcp-html
-  namespace: demo
+  namespace: gateway-demo
 data:
   index.html: |
     <!DOCTYPE html>
@@ -88,7 +88,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: hello-gcp
-  namespace: demo
+  namespace: gateway-demo
 spec:
   selector:
     app: hello-gcp
